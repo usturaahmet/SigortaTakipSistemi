@@ -1,0 +1,14 @@
+﻿@model Kullanici
+
+<h2>Kullanıcıyı Sil</h2>
+
+<div class="alert alert-warning">
+    <strong>"@Model.IsimSoyisim"</strong> adlı kullanıcıyı silmek istediğinize emin misiniz?
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">Sil</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>

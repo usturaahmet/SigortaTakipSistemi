@@ -1,0 +1,13 @@
+﻿@model SigortaSirketi
+
+<h2>Silmek istediğinize emin misiniz?</h2>
+
+<div>
+    <h4>@Model.Ad</h4>
+</div>
+
+<form asp-action="DeleteConfirmed">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Sil</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>

@@ -1,0 +1,25 @@
+﻿@model PoliceTuru
+
+<h2>Yeni Poliçe Türü</h2>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label>Ad</label>
+        <input asp-for="Ad" class="form-control" />
+        <span asp-validation-for="Ad" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Prim (%)</label>
+        <input asp-for="Prim" class="form-control" />
+        <span asp-validation-for="Prim" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Acenta Primi (%)</label>
+        <input asp-for="AcentaPrimi" class="form-control" />
+        <span asp-validation-for="AcentaPrimi" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Kaydet</button>
+</form>

@@ -1,0 +1,41 @@
+﻿@model List<Police>
+
+<h2>Poliçeler</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">Yeni Poliçe</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Kişi</th>
+            <th>TC</th>
+            <th>Telefon</th>
+            <th>Şirket</th>
+            <th>Tür</th>
+            <th>Personel</th>
+            <th>Başlangıç</th>
+            <th>Süre (Ay)</th>
+            <th>Fiyat</th>
+            <th>Bitiş</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.PoliceNo</td>
+                <td>@item.Kisi</td>
+                <td>@item.TcNo</td>
+                <td>@item.TelefonNo</td>
+                <td>@item.SigortaSirketi?.Ad</td>
+                <td>@item.PoliceTuru?.Ad</td>
+                <td>@item.Personel?.IsimSoyisim</td>
+                <td>@item.BaslangicTarihi.ToShortDateString()</td>
+                <td>@item.PoliceSuresi</td>
+                <td>@item.Fiyat.ToString("C")</td>
+                <td>@item.BitisTarihi.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,50 @@
+﻿@model Police
+
+<h2>Poliçeyi Düzenle</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div><label>Poliçe No</label> <input asp-for="PoliceNo" class="form-control" /></div>
+    <div><label>Kişi</label> <input asp-for="Kisi" class="form-control" /></div>
+    <div><label>TC No</label> <input asp-for="TcNo" class="form-control" /></div>
+    <div><label>Telefon No</label> <input asp-for="TelefonNo" class="form-control" /></div>
+
+    <div>
+        <label>Sigorta Şirketi</label>
+        <select asp-for="SigortaSirketiId" asp-items="ViewBag.Sirketler" class="form-control"></select>
+    </div>
+
+    <div>
+        <label>Poliçe Türü</label>
+        <select asp-for="PoliceTuruId" asp-items="ViewBag.Turler" class="form-control"></select>
+    </div>
+
+    <div>
+        <label>Personel</label>
+        <select asp-for="PersonelId" asp-items="ViewBag.Personeller" class="form-control"></select>
+    </div>
+
+    <div>
+        <label>Tanzim Tarihi</label>
+        <input asp-for="TanzimTarihi" type="date" class="form-control" />
+    </div>
+
+    <div>
+        <label>Başlangıç Tarihi</label>
+        <input asp-for="BaslangicTarihi" type="date" class="form-control" />
+    </div>
+
+    <div>
+        <label>Poliçe Süresi (ay)</label>
+        <input asp-for="PoliceSuresi" class="form-control" />
+    </div>
+
+    <div>
+        <label>Fiyat</label>
+        <input asp-for="Fiyat" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Güncelle</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">İptal</a>
+</form>
