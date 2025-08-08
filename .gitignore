@@ -1,0 +1,14 @@
+# Derleme çýktýlarý
+bin/
+obj/
+.vs/
+
+# Kullanýcý ayar dosyalarý
+*.user
+*.suo
+
+# Lib klasörü (NuGet ile geri yüklenebilir)
+**/wwwroot/lib/
+
+# Lokal konfigürasyonlar (þifreler, connection string vb.)
+appsettings.Development.json
