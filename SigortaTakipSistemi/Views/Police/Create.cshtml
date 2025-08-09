@@ -1,96 +1,102 @@
-﻿@model SigortaTakipSistemi.Models.Police
-
+﻿@model SigortaTakipSistemi.ViewModels.PoliceViewModel
 @{
-    ViewData["Title"] = "Yeni Poliçe";
-    Layout = "_Layout";
+    ViewData["Title"] = "Poliçe Ekle";
 }
 
-<h2 class="mb-4">Yeni Poliçe Ekle</h2>
+<h2>Poliçe Ekle</h2>
 
-<!-- Validasyon hataları -->
-@if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.SelectMany(v => v.Errors).Any())
-{
-    <div class="alert alert-danger">
-        <ul>
-            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-            {
-                <li>@error.ErrorMessage</li>
-            }
-        </ul>
-    </div>
-}
+<form asp-action="Create" method="post" novalidate>
+    @Html.AntiForgeryToken()
 
-<form asp-action="Create" method="post">
-    <div class="row">
-        <div class="col-md-6 mb-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row g-3">
+        <div class="col-md-4">
             <label asp-for="PoliceNo" class="form-label"></label>
             <input asp-for="PoliceNo" class="form-control" />
             <span asp-validation-for="PoliceNo" class="text-danger"></span>
         </div>
-        <div class="col-md-6 mb-3">
+
+        <div class="col-md-4">
             <label asp-for="Kisi" class="form-label"></label>
             <input asp-for="Kisi" class="form-control" />
             <span asp-validation-for="Kisi" class="text-danger"></span>
         </div>
-        <div class="col-md-6 mb-3">
+
+        <div class="col-md-4">
             <label asp-for="TcNo" class="form-label"></label>
             <input asp-for="TcNo" class="form-control" />
             <span asp-validation-for="TcNo" class="text-danger"></span>
         </div>
-        <div class="col-md-6 mb-3">
+
+        <div class="col-md-4">
             <label asp-for="TelefonNo" class="form-label"></label>
             <input asp-for="TelefonNo" class="form-control" />
             <span asp-validation-for="TelefonNo" class="text-danger"></span>
         </div>
-        <div class="col-md-6 mb-3">
-            <label asp-for="SigortaSirketiId" class="form-label">Sigorta Şirketi</label>
-            <select asp-for="SigortaSirketiId" class="form-select" asp-items="ViewBag.Sirketler">
-                <option value="">-- Seçiniz --</option>
+
+        <div class="col-md-4">
+            <label asp-for="SigortaSirketiId" class="form-label"></label>
+            <select asp-for="SigortaSirketiId" asp-items="Model.SigortaSirketleri" class="form-select">
+                <option value="">Seçiniz...</option>
             </select>
             <span asp-validation-for="SigortaSirketiId" class="text-danger"></span>
         </div>
-        <div class="col-md-6 mb-3">
-            <label asp-for="PoliceTuruId" class="form-label">Poliçe Türü</label>
-            <select asp-for="PoliceTuruId" class="form-select" asp-items="ViewBag.Turler">
-                <option value="">-- Seçiniz --</option>
+
+        <div class="col-md-4">
+            <label asp-for="PoliceTuruId" class="form-label"></label>
+            <select asp-for="PoliceTuruId" asp-items="Model.PoliceTurleri" class="form-select">
+                <option value="">Seçiniz...</option>
             </select>
             <span asp-validation-for="PoliceTuruId" class="text-danger"></span>
         </div>
-        <div class="col-md-6 mb-3">
-            <label asp-for="PersonelId" class="form-label">Personel</label>
-            <select asp-for="PersonelId" class="form-select" asp-items="ViewBag.Personeller">
-                <option value="">-- Seçiniz --</option>
+
+        <div class="col-md-4">
+            <label asp-for="PersonelId" class="form-label"></label>
+            <select asp-for="PersonelId" asp-items="Model.Personeller" class="form-select">
+                <option value="">Seçiniz...</option>
             </select>
             <span asp-validation-for="PersonelId" class="text-danger"></span>
         </div>
-        <div class="col-md-6 mb-3">
+
+        <div class="col-md-3">
             <label asp-for="TanzimTarihi" class="form-label"></label>
             <input asp-for="TanzimTarihi" type="date" class="form-control" />
             <span asp-validation-for="TanzimTarihi" class="text-danger"></span>
         </div>
-        <div class="col-md-6 mb-3">
+
+        <div class="col-md-3">
             <label asp-for="BaslangicTarihi" class="form-label"></label>
             <input asp-for="BaslangicTarihi" type="date" class="form-control" />
             <span asp-validation-for="BaslangicTarihi" class="text-danger"></span>
         </div>
-        <div class="col-md-6 mb-3">
-            <label asp-for="PoliceSuresi" class="form-label">Poliçe Süresi (ay)</label>
-            <input asp-for="PoliceSuresi" class="form-control" />
+
+        <div class="col-md-3">
+            <label asp-for="PoliceSuresi" class="form-label"></label>
+            <input asp-for="PoliceSuresi" type="number" class="form-control" />
             <span asp-validation-for="PoliceSuresi" class="text-danger"></span>
         </div>
-        <div class="col-md-6 mb-3">
+
+        <div class="col-md-3">
             <label asp-for="Fiyat" class="form-label"></label>
-            <input asp-for="Fiyat" class="form-control" />
+            <input asp-for="Fiyat" type="number" step="0.01" class="form-control" />
             <span asp-validation-for="Fiyat" class="text-danger"></span>
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Kaydet</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">İptal</a>
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+        <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
+    </div>
 </form>
 
+@if (ViewBag.ModelErrors != null)
+{
+    <hr />
+    <h5>ModelState Hataları (geçici)</h5>
+    <pre>@System.Text.Json.JsonSerializer.Serialize(ViewBag.ModelErrors)</pre>
+}
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

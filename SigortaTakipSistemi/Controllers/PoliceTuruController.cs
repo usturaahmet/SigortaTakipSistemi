@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SigortaTakipSistemi.Models;
-using YourNamespace.Data;
+using SigortaTakipSistemi.Data;
 using Microsoft.EntityFrameworkCore;
 
 public class PoliceTuruController : Controller

@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace SigortaTakipSistemi.Models
+namespace SigortaTakipSistemi.ViewModels
 {
-    public class Police
+    public class PoliceViewModel
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required, StringLength(50)]
         public string PoliceNo { get; set; } = string.Empty;
@@ -29,23 +29,20 @@ namespace SigortaTakipSistemi.Models
         public int PersonelId { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime TanzimTarihi { get; set; }
+        public DateTime TanzimTarihi { get; set; } = DateTime.Today;
 
         [DataType(DataType.Date)]
-        public DateTime BaslangicTarihi { get; set; }
+        public DateTime BaslangicTarihi { get; set; } = DateTime.Today;
 
         [Range(1, 120)]
-        public int PoliceSuresi { get; set; }
+        public int PoliceSuresi { get; set; } = 12;
 
-        [Precision(18, 2)]
+        [Range(0, 99999999999999.99)]
         public decimal Fiyat { get; set; }
 
-        [DataType(DataType.Date)]
-        public DateTime BitisTarihi { get; set; }
-
-        // 🔽🔽🔽 BURASI YENİ: Navigation property’ler
-        public virtual SigortaSirketi? SigortaSirketi { get; set; }
-        public virtual PoliceTuru? PoliceTuru { get; set; }
-        public virtual Kullanici? Personel { get; set; }
+        // UI dropdown listeleri
+        public List<SelectListItem> SigortaSirketleri { get; set; } = new();
+        public List<SelectListItem> PoliceTurleri { get; set; } = new();
+        public List<SelectListItem> Personeller { get; set; } = new();
     }
 }
