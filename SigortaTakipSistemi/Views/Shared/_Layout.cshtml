@@ -1,6 +1,6 @@
-﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+﻿@* Identity servisleri kullanmıyorsan bu inject satırlarına gerek yok *@
+@* @inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager *@
 
 <!DOCTYPE html>
 <html lang="tr">
@@ -27,7 +27,7 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Police" asp-action="Index">Poliçeler</a>
                         </li>
-                        @if (User.IsInRole("Admin"))
+                        @if (User?.IsInRole("Admin") == true)
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="SigortaSirketi" asp-action="Index">Şirketler</a>
@@ -41,10 +41,10 @@
                         }
                     </ul>
                     <ul class="navbar-nav">
-                        @if (SignInManager.IsSignedIn(User))
+                        @if (User?.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <span class="navbar-text text-white me-3">@User.Identity.Name</span>
+                                <span class="navbar-text text-white me-3">@User.Identity?.Name</span>
                             </li>
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
@@ -64,9 +64,9 @@
         </nav>
     </header>
 
-    <div class="container mt-4">
+    <main class="container mt-4">
         @RenderBody()
-    </div>
+    </main>
 
     <footer class="border-top footer text-muted mt-4">
         <div class="container">

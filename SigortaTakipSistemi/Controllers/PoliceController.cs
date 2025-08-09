@@ -40,51 +40,34 @@ public class PoliceController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(PoliceViewModel vm)
+    public IActionResult Create(Police model)
     {
-        // Sunucu tarafı asgari kontroller
-        if (vm.BaslangicTarihi == default)
-            ModelState.AddModelError(nameof(vm.BaslangicTarihi), "Başlangıç tarihi zorunlu.");
+        if (!ModelState.IsValid) return View(model);
 
-        if (vm.PoliceSuresi <= 0)
-            ModelState.AddModelError(nameof(vm.PoliceSuresi), "Süre (ay) 1’den büyük olmalıdır.");
-
-        if (!ModelState.IsValid)
-        {
-            // Hataları görmek istersen (geçici)
-            ViewBag.ModelErrors = ModelState
-                .Where(x => x.Value!.Errors.Count > 0)
-                .Select(x => new { Field = x.Key, Err = x.Value!.Errors.Select(e => e.ErrorMessage) })
-                .ToList();
-
-            FillDropdowns(vm);
-            return View(vm);
-        }
-
-        // BitisTarihi hesapla
-        var bitis = vm.BaslangicTarihi.AddMonths(vm.PoliceSuresi);
+        // Hesapla ama property’ye atama YAPMA
+        var bitis = model.BaslangicTarihi.AddMonths(model.PoliceSuresi);
 
         var entity = new Police
         {
-            PoliceNo = vm.PoliceNo,
-            Kisi = vm.Kisi,
-            TcNo = vm.TcNo,
-            TelefonNo = vm.TelefonNo,
-            SigortaSirketiId = vm.SigortaSirketiId,
-            PoliceTuruId = vm.PoliceTuruId,
-            PersonelId = vm.PersonelId,
-            TanzimTarihi = vm.TanzimTarihi,
-            BaslangicTarihi = vm.BaslangicTarihi,
-            PoliceSuresi = vm.PoliceSuresi,
-            Fiyat = vm.Fiyat,
-            BitisTarihi = bitis
+            PoliceNo = model.PoliceNo,
+            Kisi = model.Kisi,
+            TcNo = model.TcNo,
+            TelefonNo = model.TelefonNo,
+            SigortaSirketiId = model.SigortaSirketiId,
+            PoliceTuruId = model.PoliceTuruId,
+            PersonelId = model.PersonelId,
+            TanzimTarihi = model.TanzimTarihi,
+            BaslangicTarihi = model.BaslangicTarihi,
+            PoliceSuresi = model.PoliceSuresi,
+            Fiyat = model.Fiyat
+            // BitisTarihi = bitis;  // ❌ KALDIR
         };
 
         _context.Policeler.Add(entity);
         _context.SaveChanges();
-
         return RedirectToAction(nameof(Index));
     }
+
 
     public IActionResult Index()
     {
@@ -93,7 +76,7 @@ public class PoliceController : Controller
             .Include(p => p.PoliceTuru)
             .Include(p => p.Personel)
             .OrderByDescending(p => p.Id)
-            .ToList();
+            .ToList(); // BitisTarihi memory'de hesaplanacak
 
         return View(list);
     }

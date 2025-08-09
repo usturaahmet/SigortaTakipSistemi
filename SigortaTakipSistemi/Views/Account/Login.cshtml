@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Giriş";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <h3 class="mb-3">Kullanıcı Girişi</h3>
+
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+            <div class="mb-3">
+                <label class="form-label">Kullanıcı Adı</label>
+                <input name="kullaniciAdi" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Şifre</label>
+                <input type="password" name="sifre" class="form-control" required />
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div>@err.ErrorMessage</div>
+                    }
+                </div>
+            }
+
+            <button class="btn btn-primary w-100" type="submit">Giriş Yap</button>
+        </form>
+    </div>
+</div>

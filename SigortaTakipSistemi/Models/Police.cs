@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace SigortaTakipSistemi.Models
@@ -35,15 +36,17 @@ namespace SigortaTakipSistemi.Models
         public DateTime BaslangicTarihi { get; set; }
 
         [Range(1, 120)]
-        public int PoliceSuresi { get; set; }
+        public int PoliceSuresi { get; set; } // ay
 
         [Precision(18, 2)]
         public decimal Fiyat { get; set; }
 
+        // 🔹 DB’de yok, sadece C# tarafında hesaplanıyor
+        [NotMapped]
         [DataType(DataType.Date)]
-        public DateTime BitisTarihi { get; set; }
+        public DateTime BitisTarihi => BaslangicTarihi.AddMonths(PoliceSuresi);
 
-        // 🔽🔽🔽 BURASI YENİ: Navigation property’ler
+        // Navigation properties
         public virtual SigortaSirketi? SigortaSirketi { get; set; }
         public virtual PoliceTuru? PoliceTuru { get; set; }
         public virtual Kullanici? Personel { get; set; }
