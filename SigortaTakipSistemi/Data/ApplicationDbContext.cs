@@ -11,6 +11,7 @@ namespace SigortaTakipSistemi.Data
         public DbSet<SigortaSirketi> SigortaSirketleri => Set<SigortaSirketi>();
         public DbSet<PoliceTuru> PoliceTurleri => Set<PoliceTuru>();
         public DbSet<Kullanici> Kullanicilar => Set<Kullanici>();
+        public DbSet<PoliceTuruSirket> PoliceTuruSirketler { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -19,6 +20,12 @@ namespace SigortaTakipSistemi.Data
             modelBuilder.Entity<Police>()
                 .Property(p => p.Fiyat)
                 .HasPrecision(18, 2); // Decimal güvenliği
+
+            modelBuilder.Entity<PoliceTuruSirket>()
+                .HasIndex(x => new { x.SigortaSirketiId, x.PoliceTuruId })
+                .IsUnique();
         }
+
+
     }
 }

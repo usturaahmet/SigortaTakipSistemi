@@ -23,6 +23,9 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();

@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Yönetim";
+}
+<div class="container mt-3">
+    <h2 class="mb-4">Yönetim</h2>
+    <div class="row g-3">
+        <div class="col-md-3">
+            <a class="text-decoration-none" href="@Url.Action("Index","PoliceTuru")">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">Poliçe Türleri</h5>
+                        <small>Tür ekle/düzenle</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a class="text-decoration-none" href="@Url.Action("Index","SigortaSirketi")">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">Sigorta Şirketleri</h5>
+                        <small>Şirket ekle/düzenle</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a class="text-decoration-none" href="@Url.Action("Index","Kullanici")">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">Kullanıcılar</h5>
+                        <small>Rol ve erişimler</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a class="text-decoration-none" href="@Url.Action("Index","PoliceTuruSirket")">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">Şirket–Tür Oranları</h5>
+                        <small>Prim ve acenta primi</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

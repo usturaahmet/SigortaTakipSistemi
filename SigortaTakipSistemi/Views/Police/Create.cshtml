@@ -1,9 +1,9 @@
-﻿@model SigortaTakipSistemi.ViewModels.PoliceViewModel
+﻿@model SigortaTakipSistemi.Models.PoliceTuru
 @{
-    ViewData["Title"] = "Poliçe Ekle";
+    ViewData["Title"] = "Yeni Poliçe Türü";
 }
 
-<h2>Poliçe Ekle</h2>
+<h2>Yeni Poliçe Türü</h2>
 
 <form asp-action="Create" method="post" novalidate>
     @Html.AntiForgeryToken()
@@ -11,76 +11,23 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="row g-3">
-        <div class="col-md-4">
-            <label asp-for="PoliceNo" class="form-label"></label>
-            <input asp-for="PoliceNo" class="form-control" />
-            <span asp-validation-for="PoliceNo" class="text-danger"></span>
+        <div class="col-md-6">
+            <label asp-for="Ad" class="form-label"></label>
+            <input asp-for="Ad" class="form-control" />
+            <span asp-validation-for="Ad" class="text-danger"></span>
         </div>
 
-        <div class="col-md-4">
-            <label asp-for="Kisi" class="form-label"></label>
-            <input asp-for="Kisi" class="form-control" />
-            <span asp-validation-for="Kisi" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4">
-            <label asp-for="TcNo" class="form-label"></label>
-            <input asp-for="TcNo" class="form-control" />
-            <span asp-validation-for="TcNo" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4">
-            <label asp-for="TelefonNo" class="form-label"></label>
-            <input asp-for="TelefonNo" class="form-control" />
-            <span asp-validation-for="TelefonNo" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4">
-            <label asp-for="SigortaSirketiId" class="form-label"></label>
-            <select asp-for="SigortaSirketiId" asp-items="Model.SigortaSirketleri" class="form-select">
-                <option value="">Seçiniz...</option>
-            </select>
-            <span asp-validation-for="SigortaSirketiId" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4">
-            <label asp-for="PoliceTuruId" class="form-label"></label>
-            <select asp-for="PoliceTuruId" asp-items="Model.PoliceTurleri" class="form-select">
-                <option value="">Seçiniz...</option>
-            </select>
-            <span asp-validation-for="PoliceTuruId" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4">
-            <label asp-for="PersonelId" class="form-label"></label>
-            <select asp-for="PersonelId" asp-items="Model.Personeller" class="form-select">
-                <option value="">Seçiniz...</option>
-            </select>
-            <span asp-validation-for="PersonelId" class="text-danger"></span>
+        <!-- Varsayılan oranlar (fallback): şirket bazlı oran tanımlı değilse kullanılacak -->
+        <div class="col-md-3">
+            <label asp-for="Prim" class="form-label">Prim (%)</label>
+            <input asp-for="Prim" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="Prim" class="text-danger"></span>
         </div>
 
         <div class="col-md-3">
-            <label asp-for="TanzimTarihi" class="form-label"></label>
-            <input asp-for="TanzimTarihi" type="date" class="form-control" />
-            <span asp-validation-for="TanzimTarihi" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-3">
-            <label asp-for="BaslangicTarihi" class="form-label"></label>
-            <input asp-for="BaslangicTarihi" type="date" class="form-control" />
-            <span asp-validation-for="BaslangicTarihi" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-3">
-            <label asp-for="PoliceSuresi" class="form-label"></label>
-            <input asp-for="PoliceSuresi" type="number" class="form-control" />
-            <span asp-validation-for="PoliceSuresi" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-3">
-            <label asp-for="Fiyat" class="form-label"></label>
-            <input asp-for="Fiyat" type="number" step="0.01" class="form-control" />
-            <span asp-validation-for="Fiyat" class="text-danger"></span>
+            <label asp-for="AcentaPrimi" class="form-label">Acenta Primi (%)</label>
+            <input asp-for="AcentaPrimi" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="AcentaPrimi" class="text-danger"></span>
         </div>
     </div>
 
@@ -90,13 +37,27 @@
     </div>
 </form>
 
-@if (ViewBag.ModelErrors != null)
-{
-    <hr />
-    <h5>ModelState Hataları (geçici)</h5>
-    <pre>@System.Text.Json.JsonSerializer.Serialize(ViewBag.ModelErrors)</pre>
-}
-
-@section Scripts {
+@section Scripts{
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function showRates(r){
+            if(!r){
+                $('#PrimYuzde, #AcentaPrimiYuzde').val('');
+                $('#OranUyari').removeClass('d-none');
+            }else{
+                $('#PrimYuzde').val(r.prim);
+                $('#AcentaPrimiYuzde').val(r.acenta);
+                $('#OranUyari').addClass('d-none');
+            }
+        }
+        function loadRates(){
+            var s = $('#SigortaSirketiId').val(), t = $('#PoliceTuruId').val();
+            if(!s || !t){ showRates(null); return; }
+            $.get('@Url.Action("GetRates","PoliceTuruSirket")', { sirketId:s, turId:t })
+             .done(showRates).fail(function(){ showRates(null); });
+        }
+        $('#SigortaSirketiId,#PoliceTuruId').on('change', loadRates);
+        $(loadRates);
+    </script>
 }
