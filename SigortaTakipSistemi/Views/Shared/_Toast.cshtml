@@ -1,0 +1,33 @@
+﻿@{
+    var success = TempData["Success"] as string;
+    var error = TempData["Error"] as string;
+    var info = TempData["Info"] as string;
+    var warn = TempData["Warning"] as string;
+
+    var msg = success ?? error ?? info ?? warn;
+    var cls = success != null ? "bg-success"
+            : error != null ? "bg-danger"
+            : warn != null ? "bg-warning text-dark"
+                              : "bg-info";
+}
+@if (!string.IsNullOrWhiteSpace(msg))
+{
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast align-items-center text-white @cls border-0" role="alert"
+             aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3500">
+            <div class="d-flex">
+                <div class="toast-body">@msg</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var el = document.querySelector(".toast");
+            if (el && window.bootstrap && bootstrap.Toast) {
+                new bootstrap.Toast(el).show();
+            }
+        })();
+    </script>
+}

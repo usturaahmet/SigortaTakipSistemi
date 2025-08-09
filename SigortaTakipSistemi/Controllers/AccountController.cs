@@ -3,77 +3,67 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SigortaTakipSistemi.Data;
+using SigortaTakipSistemi.ViewModels;
 using System.Security.Claims;
 
-namespace SigortaTakipSistemi.Controllers
+public class AccountController : Controller
 {
-    public class AccountController : Controller
+    private readonly ApplicationDbContext _context;
+    public AccountController(ApplicationDbContext db) => _context = db;
+
+    [AllowAnonymous]
+    [HttpGet]
+    public IActionResult Login(string? returnUrl = null)
+        => View(new LoginViewModel { ReturnUrl = returnUrl });
+
+    [AllowAnonymous]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
-        private readonly ApplicationDbContext _context;
+        if (!ModelState.IsValid) return View(model);
 
-        public AccountController(ApplicationDbContext db)
+        var input = (model.KullaniciAdiOrEposta ?? "").Trim();
+
+        // kullanıcı adı veya e-posta ile arama
+        var user = _context.Kullanicilar
+            .FirstOrDefault(x => x.KullaniciAdi == input || x.Eposta == input);
+
+        if (user == null || user.Sifre != model.Sifre)
         {
-            _context = db;
+            ModelState.AddModelError("", "Kullanıcı adı veya şifre hatalı.");
+            return View(model);
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        public IActionResult Login(string? returnUrl = null)
+        var claims = new List<Claim>
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
-        }
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.KullaniciAdi),
+            new Claim(ClaimTypes.Email, user.Eposta ?? string.Empty),
+            new Claim(ClaimTypes.Role, user.Rol ?? "Kullanici")
+        };
 
-        [AllowAnonymous]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string kullaniciAdi, string sifre, string? returnUrl = null)
-        {
-            var user = _context.Kullanicilar.FirstOrDefault(x => x.KullaniciAdi == kullaniciAdi);
-            if (user == null || user.Sifre != sifre) // basit doğrulama (sonra hash yaparız)
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(identity),
+            new AuthenticationProperties
             {
-                ModelState.AddModelError("", "Kullanıcı adı veya şifre hatalı.");
-                return View();
-            }
+                IsPersistent = model.BeniHatirla,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8)
+            });
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.KullaniciAdi),
-                new Claim(ClaimTypes.Email, user.Eposta ?? string.Empty),
-                new Claim(ClaimTypes.Role, user.Rol ?? "Kullanici")
-            };
+        if (!string.IsNullOrWhiteSpace(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+            return Redirect(model.ReturnUrl);
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
+        return RedirectToAction("Index", "Home");
+    }
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal,
-                new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8)
-                });
-
-            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
-                return Redirect(returnUrl);
-
-            return RedirectToAction("Index", "Home");
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "Account");
-        }
-
-        [AllowAnonymous]
-        public IActionResult AccessDenied()
-        {
-            return View();
-        }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction("Login", "Account");
     }
 }
