@@ -1,22 +1,249 @@
-html {
-  font-size: 14px;
+/* =========================================================
+   Sigorta Takip – Mavi/Gri Profesyonel Tema
+   Bootstrap 5.3 ile uyumlu
+   ========================================================= */
+
+/* ---------- Deðiþkenler ---------- */
+:root {
+    /* Renk paleti */
+    --brand: #2563eb; /* primary mavi */
+    --brand-600: #1d4ed8;
+    --ink: #0f172a; /* slate-900 */
+    --ink-600: #334155; /* slate-600 */
+    --surface: #f6f8fb; /* açýk gri arka plan */
+    --muted: #94a3b8;
+    /* Boyutlar */
+    --radius: 14px;
+    --sidebar-w: 260px;
+    /* Bootstrap renk köprüleri */
+    --bs-primary: var(--brand);
+    --bs-link-color: var(--brand);
+    --bs-link-hover-color: var(--brand-600);
+    --focus-ring: 0 0 0 .2rem rgba(37,99,235,.35);
 }
 
-@media (min-width: 768px) {
-  html {
+/* Dark tema deðiþkenleri */
+[data-bs-theme="dark"] {
+    --surface: #0b1220;
+    --ink: #e2e8f0;
+    --ink-600: #cbd5e1;
+    --muted: #94a3b8;
+}
+
+/* ---------- Taban ---------- */
+html, body {
+    height: 100%;
+}
+
+html {
     font-size: 16px;
-  }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+@media (max-width: 767.98px) {
+    html {
+        font-size: 15px;
+    }
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+body.layout {
+    display: flex;
+    min-height: 100vh;
+    background: var(--surface);
+    color: var(--ink);
 }
 
-body {
-  margin-bottom: 60px;
+/* Card ve container yapý */
+.page-wrapper {
+    max-width: 100%;
 }
+
+.card {
+    border-radius: var(--radius);
+}
+
+/* Linkler */
+a {
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+    width: var(--sidebar-w);
+    background: linear-gradient(180deg,#0b1220,#0e1527 35%,#101a2e);
+    color: #cbd5e1;
+}
+
+    .sidebar .brand {
+        height: 56px;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+        display: flex;
+        align-items: center;
+    }
+
+        .sidebar .brand .brand-text {
+            font-weight: 700;
+            letter-spacing: .2px;
+        }
+
+.sidebar-nav {
+    padding-top: .5rem;
+}
+
+.sidebar .nav-section {
+    font-size: .70rem;
+    letter-spacing: .08em;
+    color: #94a3b8;
+    padding: .75rem .75rem .25rem .75rem;
+}
+
+.sidebar .nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+    border-radius: 10px;
+    margin: 2px 6px;
+    padding: .5rem .65rem;
+    color: #c7d2fe;
+    opacity: .9;
+}
+
+    .sidebar .nav .nav-link:hover {
+        background: rgba(37,99,235,.12);
+        color: #e2e8f0;
+    }
+
+    .sidebar .nav .nav-link.active {
+        background: rgba(37,99,235,.25);
+        color: #fff;
+        font-weight: 600;
+        box-shadow: inset 0 0 0 1px rgba(37,99,235,.35);
+    }
+
+/* Sidebar daraltýlmýþ */
+body.sidebar-collapsed .sidebar {
+    width: 74px;
+}
+
+    body.sidebar-collapsed .sidebar .brand .brand-text {
+        display: none;
+    }
+
+    body.sidebar-collapsed .sidebar .nav-section {
+        display: none;
+    }
+
+    body.sidebar-collapsed .sidebar .nav .nav-link {
+        justify-content: center;
+    }
+
+        body.sidebar-collapsed .sidebar .nav .nav-link i {
+            margin-right: 0 !important;
+        }
+
+/* ---------- Topbar ---------- */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    backdrop-filter: saturate(180%) blur(6px);
+    background: rgba(255,255,255,.65);
+    border-color: rgba(0,0,0,.06) !important;
+}
+
+[data-bs-theme="dark"] .topbar {
+    background: rgba(17,24,39,.45);
+    border-color: rgba(255,255,255,.08) !important;
+}
+
+.topbar .search {
+    max-width: 320px;
+}
+
+/* ---------- Ýçerik ---------- */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.soft-actions > * {
+    margin-left: .5rem;
+}
+
+/* ---------- Form & Button odak halkasý ---------- */
+.btn:focus, .btn:active:focus,
+.btn-link.nav-link:focus, .form-control:focus,
+.form-select:focus, .form-check-input:focus {
+    box-shadow: var(--focus-ring);
+    outline: 0;
+}
+
+/* ---------- Tablo & Liste stilleri ---------- */
+.table thead th {
+    font-weight: 600;
+    color: var(--ink-600);
+    background: rgba(2,6,23,.02);
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(37,99,235,.06);
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}
+
+/* ---------- Breadcrumb ---------- */
+.breadcrumb {
+    --bs-breadcrumb-divider-color: var(--muted);
+    --bs-breadcrumb-item-active-color: var(--ink);
+    margin: 0 0 .25rem 0;
+    color: var(--muted);
+}
+
+/* ---------- Badge yumuþatma ---------- */
+.badge.rounded-pill {
+    padding: .4rem .65rem;
+}
+
+/* ---------- Modal köþe ---------- */
+.modal-content {
+    border-radius: var(--radius);
+}
+
+/* ---------- Toaster konumu - zaten partial veriyor ---------- */
+.toast-container {
+    z-index: 1085;
+}
+
+/* ---------- Yardýmcý sýnýflar ---------- */
+.text-muted-600 {
+    color: var(--ink-600) !important;
+}
+
+.shadow-soft {
+    box-shadow: 0 10px 30px rgba(2,6,23,.06);
+}
+
+/* ---------- Dark Mode ekstra uyarlamalar ---------- */
+[data-bs-theme="dark"] .sidebar .nav .nav-link.active {
+    background: rgba(37,99,235,.28);
+    box-shadow: inset 0 0 0 1px rgba(37,99,235,.4);
+}
+
+[data-bs-theme="dark"] .table thead th {
+    background: rgba(255,255,255,.03);
+}
+
+.phone-link {
+    font-variant-numeric: tabular-nums;
+}
+
+    .phone-link span {
+        letter-spacing: .2px;
+    }

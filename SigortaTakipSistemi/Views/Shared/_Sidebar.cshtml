@@ -1,13 +1,55 @@
-﻿@* Views/Shared/_Sidebar.cshtml *@
-<ul class="nav flex-column p-2">
+﻿@functions {
+    string Active(string controller, string? action = null)
+    {
+        var c = ViewContext.RouteData.Values["Controller"]?.ToString();
+        var a = ViewContext.RouteData.Values["Action"]?.ToString();
+        bool ok = string.Equals(c, controller, StringComparison.OrdinalIgnoreCase) &&
+                  (action == null || string.Equals(a, action, StringComparison.OrdinalIgnoreCase));
+        return ok ? "active" : string.Empty;
+    }
+}
+<ul class="nav flex-column px-2 sidebar-nav">
+    <!-- Genel -->
+    <li class="nav-section">GENEL</li>
     <li class="nav-item">
-        <a class="nav-link" asp-controller="Home" asp-action="Index">
+        <a class="nav-link @Active("Home","Index")" asp-controller="Home" asp-action="Index">
             <i class="bi bi-speedometer2 me-2"></i>Dashboard
         </a>
     </li>
+
+    <!-- Poliçeler -->
+    <li class="nav-section">POLİÇELER</li>
     <li class="nav-item">
-        <a class="nav-link" asp-controller="Police" asp-action="Index">
+        <a class="nav-link @Active("Police")" asp-controller="Police" asp-action="Index">
             <i class="bi bi-file-earmark-text me-2"></i>Poliçeler
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @Active("PoliceTuru")" asp-controller="PoliceTuru" asp-action="Index">
+            <i class="bi bi-card-checklist me-2"></i>Poliçe Türleri
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @Active("SigortaSirketi")" asp-controller="SigortaSirketi" asp-action="Index">
+            <i class="bi bi-building me-2"></i>Sigorta Şirketleri
+        </a>
+    </li>
+
+    <!-- Yönetim -->
+    <li class="nav-section">YÖNETİM</li>
+    <li class="nav-item">
+        <a class="nav-link @Active("Kullanici")" asp-controller="Kullanici" asp-action="Index">
+            <i class="bi bi-people me-2"></i>Kullanıcılar
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @Active("Raporlar")" asp-controller="Raporlar" asp-action="Index">
+            <i class="bi bi-graph-up-arrow me-2"></i>Raporlar
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @Active("Ayarlar")" asp-controller="Ayarlar" asp-action="Index">
+            <i class="bi bi-sliders me-2"></i>Ayarlar
         </a>
     </li>
 </ul>

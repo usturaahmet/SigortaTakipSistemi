@@ -1,0 +1,276 @@
+﻿@model SigortaTakipSistemi.Models.ViewModels.VadeRaporViewModel
+@{
+    ViewData["Title"] = "Poliçe Vade Raporu";
+}
+@section PageActions{
+    <a class="btn btn-sm btn-outline-primary" asp-action="VadeCsv" asp-route-gun="@Model.Gun">
+        <i class="bi bi-filetype-csv me-1"></i>CSV indir
+    </a>
+}
+<div class="mb-3">
+    <form method="get" class="d-flex align-items-center gap-2">
+        <label class="text-muted-600">Yaklaşan gün eşiği:</label>
+        <input type="number" class="form-control" style="max-width:120px" name="gun" value="@Model.Gun" min="1" />
+        <button class="btn btn-primary"><i class="bi bi-funnel me-1"></i>Uygula</button>
+    </form>
+</div>
+
+<div class="row g-3">
+    <!-- Süresi Dolanlar -->
+    <div class="col-12 col-xxl-6">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <div><i class="bi bi-exclamation-octagon me-2 text-danger"></i><strong>Süresi Dolanlar</strong></div>
+                <span class="badge rounded-pill bg-danger">@Model.ToplamDolan</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive-md">
+                    <table class="table table-hover m-0">
+                        <thead>
+                            <tr>
+                                <th>Poliçe</th>
+                                <th>Kişi</th>
+                                <th>Şirket</th>
+                                <th>Tür</th>
+                                <th>Başlangıç</th>
+                                <th>Bitiş</th>
+                                <th>Tel</th>
+                                <th>Kalan</th>
+                                <th class="text-end">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var x in Model.Dolanlar)
+                            {
+                                <tr class="table-danger">
+                                    <td>@x.PoliceNo</td>
+                                    <td>@x.Kisi</td>
+                                    <td>@x.SigortaSirketi</td>
+                                    <td>@x.PoliceTuru</td>
+                                    <td>@x.Baslangic.ToString("dd.MM.yyyy")</td>
+                                    <td>@x.Bitis.ToString("dd.MM.yyyy")</td>
+                                    <td class="text-nowrap">
+                                        @if (!string.IsNullOrWhiteSpace(x.TelefonNo))
+                                        {
+                                            var tel = x.TelefonNo!.Trim();
+                                            var telHref = tel.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("-", "");
+                                            <a href="tel:@telHref" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 phone-link">
+                                                <i class="bi bi-telephone"></i><span>@tel</span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+
+                                    <td><span class="badge bg-danger">@(x.KalanGun) gün</span></td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-sm btn-outline-dark btn-police-detail"
+                                                data-bs-toggle="modal" data-bs-target="#policeDetailModal"
+                                                data-id="@x.Id"
+                                                data-no="@x.PoliceNo"
+                                                data-kisi="@x.Kisi"
+                                                data-tc="@x.TcNo"
+                                                data-tel="@x.TelefonNo"
+                                                data-sirket="@x.SigortaSirketi"
+                                                data-tur="@x.PoliceTuru"
+                                                data-tanzim="@x.Tanzim.ToString("dd.MM.yyyy")"
+                                                data-baslangic="@x.Baslangic.ToString("dd.MM.yyyy")"
+                                                data-sure="@x.SureAy"
+                                                data-bitis="@x.Bitis.ToString("dd.MM.yyyy")"
+                                                data-kalan="@(x.KalanGun)"
+                                                data-fiyat="@x.Fiyat.ToString("0.##")">
+                                            <i class="bi bi-card-text me-1"></i>Detay
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!Model.Dolanlar.Any())
+                            {
+                                <tr><td colspan="9" class="text-center text-muted py-4">Kayıt yok.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yaklaşanlar -->
+    <div class="col-12 col-xxl-6">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <div><i class="bi bi-alarm me-2 text-primary"></i><strong>Yaklaşanlar (≤ @Model.Gun gün)</strong></div>
+                <span class="badge rounded-pill bg-primary">@Model.ToplamYaklasan</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive-md">
+                    <table class="table table-hover m-0">
+                        <thead>
+                            <tr>
+                                <th>Poliçe</th>
+                                <th>Kişi</th>
+                                <th>Şirket</th>
+                                <th>Tür</th>
+                                <th>Başlangıç</th>
+                                <th>Bitiş</th>
+                                <th>Tel</th>
+                                <th>Kalan</th>
+                                <th class="text-end">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var x in Model.Yaklasanlar)
+                            {
+                                <tr>
+                                    <td>@x.PoliceNo</td>
+                                    <td>@x.Kisi</td>
+                                    <td>@x.SigortaSirketi</td>
+                                    <td>@x.PoliceTuru</td>
+                                    <td>@x.Baslangic.ToString("dd.MM.yyyy")</td>
+                                    <td>@x.Bitis.ToString("dd.MM.yyyy")</td>
+                                    <td class="text-nowrap">
+                                        @if (!string.IsNullOrWhiteSpace(x.TelefonNo))
+                                        {
+                                            var tel = x.TelefonNo!.Trim();
+                                            var telHref = tel.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("-", "");
+                                            <a href="tel:@telHref" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 phone-link">
+                                                <i class="bi bi-telephone"></i><span>@tel</span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+
+                                    <td><span class="badge bg-warning text-dark">@(x.KalanGun) gün</span></td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-sm btn-outline-dark btn-police-detail"
+                                                data-bs-toggle="modal" data-bs-target="#policeDetailModal"
+                                                data-id="@x.Id"
+                                                data-no="@x.PoliceNo"
+                                                data-kisi="@x.Kisi"
+                                                data-tc="@x.TcNo"
+                                                data-tel="@x.TelefonNo"
+                                                data-sirket="@x.SigortaSirketi"
+                                                data-tur="@x.PoliceTuru"
+                                                data-tanzim="@x.Tanzim.ToString("dd.MM.yyyy")"
+                                                data-baslangic="@x.Baslangic.ToString("dd.MM.yyyy")"
+                                                data-sure="@x.SureAy"
+                                                data-bitis="@x.Bitis.ToString("dd.MM.yyyy")"
+                                                data-kalan="@(x.KalanGun)"
+                                                data-fiyat="@x.Fiyat.ToString("0.##")">
+                                            <i class="bi bi-card-text me-1"></i>Detay
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!Model.Yaklasanlar.Any())
+                            {
+                                <tr><td colspan="9" class="text-center text-muted py-4">Kayıt yok.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detay Modal -->
+<div class="modal fade" id="policeDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Poliçe Detayı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card shadow-soft">
+                            <div class="card-body">
+                                <h6 class="text-muted-600 mb-2">Temel Bilgiler</h6>
+                                <dl class="row mb-0">
+                                    <dt class="col-4">Poliçe No</dt>
+                                    <dd class="col-8" id="d-no"></dd>
+                                    <dt class="col-4">Kişi</dt>
+                                    <dd class="col-8" id="d-kisi"></dd>
+                                    <dt class="col-4">TC</dt>
+                                    <dd class="col-8" id="d-tc"></dd>
+                                    <dt class="col-4">Telefon</dt>
+                                    <dd class="col-8"><a id="d-tel" href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-telephone me-1"></i><span id="d-tel-text"></span></a></dd>
+                                    <dt class="col-4">Şirket</dt>
+                                    <dd class="col-8" id="d-sirket"></dd>
+                                    <dt class="col-4">Tür</dt>
+                                    <dd class="col-8" id="d-tur"></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-soft">
+                            <div class="card-body">
+                                <h6 class="text-muted-600 mb-2">Tarih & Ücret</h6>
+                                <dl class="row mb-0">
+                                    <dt class="col-5">Tanzim</dt>
+                                    <dd class="col-7" id="d-tanzim"></dd>
+                                    <dt class="col-5">Başlangıç</dt>
+                                    <dd class="col-7" id="d-baslangic"></dd>
+                                    <dt class="col-5">Süre (Ay)</dt>
+                                    <dd class="col-7" id="d-sure"></dd>
+                                    <dt class="col-5">Bitiş</dt>
+                                    <dd class="col-7" id="d-bitis"></dd>
+                                    <dt class="col-5">Kalan</dt>
+                                    <dd class="col-7"><span class="badge bg-primary" id="d-kalan"></span></dd>
+                                    <dt class="col-5">Fiyat</dt>
+                                    <dd class="col-7" id="d-fiyat"></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="d-call" class="btn btn-primary" href="#" target="_blank"><i class="bi bi-telephone me-1"></i>Ara</a>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            function setText(id, val) { document.getElementById(id).textContent = val || "-"; }
+
+            document.querySelectorAll('.btn-police-detail').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    setText('d-no', this.dataset.no);
+                    setText('d-kisi', this.dataset.kisi);
+                    setText('d-tc', this.dataset.tc);
+                    document.getElementById('d-tel-text').textContent = this.dataset.tel || "-";
+                    document.getElementById('d-tel').href = this.dataset.tel ? ('tel:' + this.dataset.tel) : '#';
+
+                    setText('d-sirket', this.dataset.sirket);
+                    setText('d-tur', this.dataset.tur);
+
+                    setText('d-tanzim', this.dataset.tanzim);
+                    setText('d-baslangic', this.dataset.baslangic);
+                    setText('d-sure', this.dataset.sure);
+                    setText('d-bitis', this.dataset.bitis);
+                    setText('d-fiyat', this.dataset.fiyat);
+                    document.getElementById('d-kalan').textContent = (this.dataset.kalan || '-') + ' gün';
+
+                    // Footer call button
+                    var tel = this.dataset.tel;
+                    var callBtn = document.getElementById('d-call');
+                    callBtn.href = tel ? ('tel:' + tel) : '#';
+                    callBtn.classList.toggle('disabled', !tel);
+                });
+            });
+        })();
+    </script>
+}
