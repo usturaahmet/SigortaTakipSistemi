@@ -1,77 +1,87 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SigortaTakipSistemi.Models;
-using SigortaTakipSistemi.Data;
 using Microsoft.EntityFrameworkCore;
+using SigortaTakipSistemi.Data;
+using SigortaTakipSistemi.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
-public class PoliceTuruController : Controller
+namespace SigortaTakipSistemi.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    public PoliceTuruController(ApplicationDbContext context)
+    public class PoliceTuruController : Controller
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _ctx;
+        public PoliceTuruController(ApplicationDbContext ctx) => _ctx = ctx;
 
-    public async Task<IActionResult> Index()
-    {
-        var list = await _context.PoliceTurleri.ToListAsync();
-        return View(list);
-    }
-
-    public IActionResult Create()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(PoliceTuru model)
-    {
-        if (ModelState.IsValid)
+        // LISTE
+        public async Task<IActionResult> Index()
         {
-            _context.Add(model);
-            await _context.SaveChangesAsync();
+            var list = await _ctx.PoliceTurleri
+                                 .AsNoTracking()
+                                 .OrderBy(x => x.Ad)
+                                 .ToListAsync();
+            return View(list);
+        }
+
+        // CREATE
+        public IActionResult Create() => View();
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(PoliceTuru m)
+        {
+            if (!ModelState.IsValid) return View(m);
+            _ctx.PoliceTurleri.Add(m);
+            await _ctx.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        return View(model);
-    }
 
-    public async Task<IActionResult> Edit(int id)
-    {
-        var item = await _context.PoliceTurleri.FindAsync(id);
-        if (item == null) return NotFound();
-        return View(item);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, PoliceTuru model)
-    {
-        if (id != model.Id) return NotFound();
-
-        if (ModelState.IsValid)
+        // EDIT
+        public async Task<IActionResult> Edit(int id)
         {
-            _context.Update(model);
-            await _context.SaveChangesAsync();
+            var m = await _ctx.PoliceTurleri.FindAsync(id);
+            if (m == null) return NotFound();
+            return View(m);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(PoliceTuru m)
+        {
+            if (!ModelState.IsValid) return View(m);
+            _ctx.Update(m);
+            await _ctx.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        return View(model);
-    }
 
-    public async Task<IActionResult> Delete(int id)
-    {
-        var item = await _context.PoliceTurleri.FindAsync(id);
-        if (item == null) return NotFound();
-        return View(item);
-    }
+        // DELETE
+        public async Task<IActionResult> Delete(int id)
+        {
+            var m = await _ctx.PoliceTurleri.FindAsync(id);
+            if (m == null) return NotFound();
+            return View(m);
+        }
 
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-        var item = await _context.PoliceTurleri.FindAsync(id);
-        _context.PoliceTurleri.Remove(item);
-        await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var m = await _ctx.PoliceTurleri.FindAsync(id);
+            if (m != null)
+            {
+                _ctx.PoliceTurleri.Remove(m);
+                await _ctx.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // DETAILS
+        public async Task<IActionResult> Details(int id)
+        {
+            var m = await _ctx.PoliceTurleri
+                              .AsNoTracking()
+                              .FirstOrDefaultAsync(x => x.Id == id);
+            if (m == null) return NotFound();
+            return View(m);
+        }
     }
 }

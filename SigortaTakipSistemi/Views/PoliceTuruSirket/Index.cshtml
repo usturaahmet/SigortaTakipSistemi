@@ -1,0 +1,33 @@
+﻿@model IEnumerable<SigortaTakipSistemi.Models.PoliceTuruSirket>
+@{
+    ViewData["Title"] = "Şirket–Tür Oranları";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="mb-0">Şirket–Tür Oranları</h2>
+    <a asp-controller="Yonetim" asp-action="Index" class="btn btn-outline-secondary">Yönetim'e Dön</a>
+</div>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Şirket</th>
+            <th>Tür</th>
+            <th>Prim (%)</th>
+            <th>Acenta Primi (%)</th>
+            <th>Aktif</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>@i.SigortaSirketi?.Ad</td>
+                <td>@i.PoliceTuru?.Ad</td>
+                <td>@string.Format("{0:0.##}", i.PrimYuzde)</td>
+                <td>@string.Format("{0:0.##}", i.AcentaPrimiYuzde)</td>
+                <td>@(i.Aktif ? "Evet" : "Hayır")</td>
+            </tr>
+        }
+    </tbody>
+</table>

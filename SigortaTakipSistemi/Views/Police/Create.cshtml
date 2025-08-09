@@ -40,24 +40,24 @@
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />
 
-    <script>
-        function showRates(r){
-            if(!r){
-                $('#PrimYuzde, #AcentaPrimiYuzde').val('');
-                $('#OranUyari').removeClass('d-none');
-            }else{
-                $('#PrimYuzde').val(r.prim);
-                $('#AcentaPrimiYuzde').val(r.acenta);
-                $('#OranUyari').addClass('d-none');
+        <script>
+            function showRates(r){
+                if(!r){
+                    $('#PrimYuzde, #AcentaPrimiYuzde').val('');
+                    $('#OranUyari').removeClass('d-none');
+                }else{
+                    $('#PrimYuzde').val(r.prim);
+                    $('#AcentaPrimiYuzde').val(r.acenta);
+                    $('#OranUyari').addClass('d-none');
+                }
             }
-        }
-        function loadRates(){
-            var s = $('#SigortaSirketiId').val(), t = $('#PoliceTuruId').val();
-            if(!s || !t){ showRates(null); return; }
-            $.get('@Url.Action("GetRates","PoliceTuruSirket")', { sirketId:s, turId:t })
-             .done(showRates).fail(function(){ showRates(null); });
-        }
-        $('#SigortaSirketiId,#PoliceTuruId').on('change', loadRates);
-        $(loadRates);
-    </script>
+            function loadRates(){
+                var s = $('#SigortaSirketiId').val(), t = $('#PoliceTuruId').val();
+                if(!s || !t){ showRates(null); return; }
+                $.get('@Url.Action("GetRates","PoliceTuruSirket")', { sirketId:s, turId:t })
+                 .done(showRates).fail(function(){ showRates(null); });
+            }
+            $('#SigortaSirketiId,#PoliceTuruId').on('change', loadRates);
+            $(loadRates);
+        </script>
 }
